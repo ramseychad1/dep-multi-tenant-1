@@ -1,0 +1,48 @@
+<div class="container">
+  <section class="wizard-step">
+    <div class="wizard-header">
+      <h1 class="heading-1">Enrollment Portal Configuration</h1>
+      <div class="step-indicator">
+        <div class="step" *ngFor="let step of steps; let i = index" (click)="goToStep(i + 1)">
+          <div class="step-number" [class.active]="currentStep === i + 1">{{ i + 1 }}</div>
+          <span class="step-label" [class.active]="currentStep === i + 1">{{ step }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="loadingProgram" class="analyzing-card">
+      <p>Loading program data...</p>
+    </div>
+
+    <div *ngIf="isAnalyzing" class="analyzing-card">
+      <p>Analyzing PDF with {{ aiProvider === 'claude' ? 'Claude' : 'Gemini' }}...</p>
+      <p class="text-muted">This may take up to 60 seconds.</p>
+    </div>
+
+    <div *ngIf="analysisError" class="alert alert-error">
+      <span class="alert-icon">&#10005;</span>
+      <div>{{ analysisError }}</div>
+    </div>
+
+    <app-upload
+      *ngIf="currentStep === 1 && !isAnalyzing"
+      (fileSelected)="onFileUploaded($event)"
+    ></app-upload>
+
+    <app-schema-editor
+      *ngIf="currentStep === 2"
+      [schema]="generatedSchema"
+      (schemaChange)="generatedSchema = $event"
+      (next)="onSchemaNext($event)"
+      (back)="onSchemaBack()"
+    ></app-schema-editor>
+
+    <div *ngIf="currentStep === 3" class="placeholder-step">
+      <p>Branding step - coming soon</p>
+    </div>
+
+    <div *ngIf="currentStep === 4" class="placeholder-step">
+      <p>Program Details step - coming soon</p>
+    </div>
+  </section>
+</div>

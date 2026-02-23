@@ -1,0 +1,37 @@
+<div class="container">
+  <div class="page-header">
+    <h2 class="heading-2">Enrollment Programs</h2>
+    <button class="btn btn-primary" (click)="createProgram()">+ New Program</button>
+  </div>
+
+  <div *ngIf="loading" class="loading">Loading programs...</div>
+
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+
+  <div *ngIf="!loading && programs.length === 0 && !error" class="empty-state">
+    <p>No enrollment programs found. Click "New Program" to create one.</p>
+  </div>
+
+  <div class="card-list" *ngIf="!loading && programs.length > 0">
+    <div class="card" *ngFor="let program of programs">
+      <div class="card-header">
+        <h3 class="card-title">{{ program.program_name }}</h3>
+        <p class="card-client">{{ program.client_name }}</p>
+      </div>
+      <div class="card-body">
+        <p class="program-type">{{ getWorkflowLabel(program) }}</p>
+      </div>
+      <div class="card-footer">
+        <span class="badge" [ngClass]="getStatusClass(program.status)">{{ program.status }}</span>
+        <div class="card-actions">
+          <button class="toggle-button" (click)="toggleStatus(program)"
+                  [title]="program.status === 'Active' ? 'Deactivate' : 'Activate'">
+            {{ program.status === 'Active' ? 'Deactivate' : 'Activate' }}
+          </button>
+          <button class="edit-button" (click)="editProgram(program)">Edit</button>
+          <button class="view-button" (click)="viewProgram(program)">View</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: dep-multi-tenant
+
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/depmt}
+    username: ${DATABASE_USERNAME:depmt}
+    password: ${DATABASE_PASSWORD:depmt}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+server:
+  port: 8080
+
+app:
+  admin:
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:admin}
+  jwt:
+    secret: ${JWT_SECRET:dep-multi-tenant-jwt-secret-key-that-is-at-least-256-bits-long}
+    expiration-ms: 86400000
+  ai:
+    claude:
+      api-key: ${CLAUDE_API_KEY:}
+    gemini:
+      api-key: ${GEMINI_API_KEY:}
+  external:
+    logo-dev:
+      api-key: ${LOGO_DEV_API_KEY:}
+    screenshotone:
+      api-key: ${SCREENSHOTONE_API_KEY:}
+    contentful:
+      api-key: ${CONTENTFUL_API_KEY:}
+      space-id: ${CONTENTFUL_SPACE_ID:}

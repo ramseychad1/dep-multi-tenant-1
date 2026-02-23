@@ -1,0 +1,49 @@
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title">Upload Enrollment Form</h2>
+  </div>
+  <div class="card-body">
+    <div class="alert alert-error" role="alert">
+      <span class="alert-icon">&#10005;</span>
+      <div>
+        <strong>Important!</strong> PDF uploads should not exceed 20MB.
+      </div>
+    </div>
+
+    <div
+      class="upload-area"
+      [class.dragging]="isDragging"
+      (click)="triggerFileInput(fileInput)"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave()"
+      (drop)="onDrop($event)"
+    >
+      <span class="upload-icon">&#11014;</span>
+      <p class="upload-text">Click to upload or drag and drop PDF here</p>
+    </div>
+
+    <input
+      #fileInput
+      type="file"
+      accept=".pdf"
+      (change)="onFileSelect($event)"
+      style="display: none"
+    />
+
+    <div *ngIf="selectedFile" class="file-info">
+      <p class="file-name">File Name: {{ selectedFile.name }}</p>
+      <p class="file-size">File Size: {{ getFileSize() }}</p>
+    </div>
+
+    <div class="input-group">
+      <label class="label" for="aiProvider">Select AI Provider</label>
+      <select class="select" id="aiProvider" [(ngModel)]="aiProvider">
+        <option value="claude">Claude</option>
+        <option value="gemini">Gemini</option>
+      </select>
+    </div>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-primary" (click)="onNext()" [disabled]="!selectedFile">Next</button>
+  </div>
+</div>

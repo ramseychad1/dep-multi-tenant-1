@@ -1,0 +1,30 @@
+<div class="dashboard-layout">
+  <nav class="sidebar" [class.collapsed]="sidebarCollapsed">
+    <div class="sidebar-header">
+      <span class="sidebar-logo">&#9889;</span>
+      <span class="sidebar-app-name">HealthBridge Admin</span>
+    </div>
+    <div class="sidebar-section">
+      <p class="sidebar-section-label">MAIN</p>
+      <a class="sidebar-item active" (click)="navigateToPrograms()">
+        <span class="sidebar-icon">&#8862;</span>
+        <span class="sidebar-label">Dashboard</span>
+      </a>
+      <a class="sidebar-item" (click)="createProgram()">
+        <span class="sidebar-icon">&#10133;</span>
+        <span class="sidebar-label">New Program</span>
+      </a>
+    </div>
+    <div class="sidebar-footer">
+      <a class="sidebar-item" (click)="logout()">
+        <span class="sidebar-icon">&#x2190;</span>
+        <span class="sidebar-label">Logout</span>
+      </a>
+      <button class="sidebar-toggle" (click)="toggleSidebar()" aria-label="Toggle sidebar">&#9664;</button>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <app-program-list></app-program-list>
+  </main>
+</div>

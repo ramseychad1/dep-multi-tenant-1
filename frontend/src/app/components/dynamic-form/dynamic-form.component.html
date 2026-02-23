@@ -1,0 +1,101 @@
+<div class="form-container" *ngIf="!loading && !error && !submitted">
+  <div class="card">
+    <div class="card-header" [style.background-color]="program?.header_background_color || ''">
+      <div class="header-content">
+        <img *ngIf="program?.logo_url" [src]="program!.logo_url" alt="Logo" class="logo" />
+        <div>
+          <h1 class="card-title" [style.color]="program?.primary_color || ''">{{ program?.program_name || 'Enrollment Form' }}</h1>
+          <p class="card-description">{{ program?.program_description || 'Please fill out the form below to enroll.' }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="onSubmit()">
+        <div *ngFor="let section of schema.sections" class="form-section">
+          <h2 class="section-title" [style.color]="program?.primary_color || ''">{{ section.title }}</h2>
+          <div class="grid-container">
+            <div *ngFor="let field of section.fields" class="input-group">
+              <label class="label" [for]="field.name">
+                {{ field.label }}
+                <span *ngIf="field.required" class="required">*</span>
+              </label>
+
+              <input
+                *ngIf="field.type !== 'select' && field.type !== 'radio' && field.type !== 'checkbox' && field.type !== 'textarea'"
+                [type]="getInputType(field)"
+                [id]="field.name"
+                class="input"
+                [placeholder]="field.placeholder || ''"
+                [(ngModel)]="formData[field.name]"
+                [name]="field.name"
+                [required]="field.required"
+              />
+
+              <textarea
+                *ngIf="field.type === 'textarea'"
+                [id]="field.name"
+                class="input textarea"
+                [placeholder]="field.placeholder || ''"
+                [(ngModel)]="formData[field.name]"
+                [name]="field.name"
+                [required]="field.required"
+                rows="3"
+              ></textarea>
+
+              <select
+                *ngIf="field.type === 'select'"
+                [id]="field.name"
+                class="input"
+                [(ngModel)]="formData[field.name]"
+                [name]="field.name"
+                [required]="field.required"
+              >
+                <option value="">Select...</option>
+                <option *ngFor="let opt of field.options" [value]="opt">{{ opt }}</option>
+              </select>
+
+              <div *ngIf="field.type === 'radio'" class="radio-group">
+                <label *ngFor="let opt of field.options" class="radio-label">
+                  <input type="radio" [name]="field.name" [value]="opt" [(ngModel)]="formData[field.name]" />
+                  {{ opt }}
+                </label>
+              </div>
+
+              <label *ngIf="field.type === 'checkbox'" class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="formData[field.name]" [name]="field.name" />
+                {{ field.placeholder || field.label }}
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <button class="btn btn-primary submit-btn" type="submit" [disabled]="submitting"
+                  [style.background-color]="program?.primary_color || ''">
+            {{ submitting ? 'Submitting...' : 'Submit Enrollment' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="loading" *ngIf="loading">
+  <p>Loading enrollment form...</p>
+</div>
+
+<div class="error-container" *ngIf="error">
+  <div class="alert alert-error">
+    <span class="alert-icon">&#10005;</span>
+    <div>{{ error }}</div>
+  </div>
+</div>
+
+<div class="success-container" *ngIf="submitted">
+  <div class="card">
+    <div class="card-body success-card">
+      <h2 class="success-title">Enrollment Submitted!</h2>
+      <p>Your enrollment has been submitted successfully. You will receive a confirmation shortly.</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,69 @@
+<div class="schema-editor">
+  <div class="alert alert-info">
+    <span class="alert-icon">&#8505;</span>
+    <div>
+      <strong>Review and Edit</strong>
+      <p>Carefully inspect the AI-generated form schema. Modify, add, remove, and reorder fields to ensure accuracy.</p>
+    </div>
+  </div>
+
+  <div *ngFor="let section of schema.sections; let si = index" class="form-section">
+    <div class="section-header">
+      <input
+        class="input section-title-input"
+        [(ngModel)]="section.title"
+        placeholder="Section Title"
+      />
+      <button class="btn btn-ghost btn-sm" (click)="removeSection(si)" title="Remove section">&#10005;</button>
+    </div>
+
+    <div class="fields-list">
+      <div *ngFor="let field of section.fields; let fi = index" class="field-card">
+        <div class="field-header">
+          <span class="field-index">{{ fi + 1 }}</span>
+          <div class="field-actions">
+            <button class="btn btn-ghost btn-sm" (click)="moveFieldUp(si, fi)" [disabled]="fi === 0" title="Move up">&#9650;</button>
+            <button class="btn btn-ghost btn-sm" (click)="moveFieldDown(si, fi)" [disabled]="fi === section.fields.length - 1" title="Move down">&#9660;</button>
+            <button class="btn btn-ghost btn-sm btn-danger" (click)="removeField(si, fi)" title="Remove">&#10005;</button>
+          </div>
+        </div>
+
+        <div class="property-editor">
+          <div class="property-item">
+            <label class="property-label">Field Label</label>
+            <input type="text" class="input" [(ngModel)]="field.label" />
+          </div>
+          <div class="property-item">
+            <label class="property-label">Field Name</label>
+            <input type="text" class="input" [(ngModel)]="field.name" />
+          </div>
+          <div class="property-item">
+            <label class="property-label">Field Type</label>
+            <select class="input" [(ngModel)]="field.type">
+              <option *ngFor="let t of fieldTypes" [value]="t">{{ t }}</option>
+            </select>
+          </div>
+          <div class="property-item">
+            <label class="property-label">Placeholder</label>
+            <input type="text" class="input" [(ngModel)]="field.placeholder" />
+          </div>
+          <div class="property-item checkbox-item">
+            <label class="property-label">
+              <input type="checkbox" [(ngModel)]="field.required" />
+              Required
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-outline add-field-btn" (click)="addField(si)">+ Add Field</button>
+    </div>
+  </div>
+
+  <button class="btn btn-outline add-section-btn" (click)="addSection()">+ Add Section</button>
+
+  <div class="editor-footer">
+    <button class="btn btn-secondary" (click)="onBack()">Back</button>
+    <button class="btn btn-primary" (click)="onNext()">Next</button>
+  </div>
+</div>

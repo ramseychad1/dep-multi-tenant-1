@@ -1,0 +1,39 @@
+<div class="login-container">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Admin Login</h2>
+    </div>
+    <form (ngSubmit)="onSubmit()">
+      <div class="input-group">
+        <label class="label" for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          class="input"
+          placeholder="Enter username"
+          [(ngModel)]="username"
+          name="username"
+          autocomplete="username"
+        />
+      </div>
+      <div class="input-group">
+        <label class="label" for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          class="input"
+          placeholder="Enter password"
+          [(ngModel)]="password"
+          name="password"
+          autocomplete="current-password"
+        />
+      </div>
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+      <button class="btn btn-primary login-btn" type="submit" [disabled]="loading">
+        {{ loading ? 'Logging in...' : 'Login' }}
+      </button>
+    </form>
+  </div>
+</div>
