@@ -49,8 +49,9 @@ public class PdfAnalysisService {
         try (PDDocument document = Loader.loadPDF(file.getBytes())) {
             PDFRenderer renderer = new PDFRenderer(document);
 
-            for (int page = 0; page < document.getNumberOfPages(); page++) {
-                BufferedImage image = renderer.renderImageWithDPI(page, 200);
+            int maxPages = Math.min(document.getNumberOfPages(), 5);
+            for (int page = 0; page < maxPages; page++) {
+                BufferedImage image = renderer.renderImageWithDPI(page, 150);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(image, "png", baos);
                 String base64 = Base64.getEncoder().encodeToString(baos.toByteArray());
@@ -62,7 +63,14 @@ public class PdfAnalysisService {
     }
 
     private String callClaudeApi(List<String> base64Images) {
-        WebClient client = webClientBuilder.baseUrl("https://api.anthropic.com").build();
+        log.info("Calling Claude API with {} images", base64Images.size());
+        long totalSize = base64Images.stream().mapToLong(String::length).sum();
+        log.info("Total base64 payload size: {} KB", totalSize / 1024);
+
+        WebClient client = webClientBuilder
+                .baseUrl("https://api.anthropic.com")
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(16 * 1024 * 1024))
+                .build();
 
         List<Map<String, Object>> contentBlocks = new ArrayList<>();
         for (String img : base64Images) {
@@ -96,8 +104,18 @@ public class PdfAnalysisService {
                     .header("anthropic-version", "2023-06-01")
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(requestBody)
-                    .retrieve()
-                    .bodyToMono(Map.class)
+                    .exchangeToMono(clientResponse -> {
+                        log.info("Claude API response status: {}", clientResponse.statusCode());
+                        if (clientResponse.statusCode().isError()) {
+                            return clientResponse.bodyToMono(String.class)
+                                    .flatMap(body -> {
+                                        log.error("Claude API error response: {}", body);
+                                        return reactor.core.publisher.Mono.error(
+                                                new RuntimeException("Claude API error " + clientResponse.statusCode() + ": " + body));
+                                    });
+                        }
+                        return clientResponse.bodyToMono(Map.class);
+                    })
                     .block();
 
             if (response != null && response.containsKey("content")) {

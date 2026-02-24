@@ -26,5 +26,9 @@ Thumbs.db
 .env
 *.env.local
 
+# Sensitive / local files
+keys/
+Enrollment Forms/
+
 # Logs
 *.log
