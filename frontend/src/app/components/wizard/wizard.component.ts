@@ -75,7 +75,8 @@ export class WizardComponent implements OnInit {
         this.isAnalyzing = false;
         this.currentStep = 2;
       },
-      error: () => {
+      error: (err) => {
+        console.error('PDF analysis error:', err);
         this.analysisError = 'Failed to analyze PDF. Please try again.';
         this.isAnalyzing = false;
       }

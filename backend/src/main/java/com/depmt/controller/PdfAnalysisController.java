@@ -2,6 +2,7 @@ package com.depmt.controller;
 
 import com.depmt.dto.ErrorResponse;
 import com.depmt.service.PdfAnalysisService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class PdfAnalysisController {
 
     private final PdfAnalysisService pdfAnalysisService;
+    private final ObjectMapper objectMapper;
 
     @PostMapping
     public ResponseEntity<?> analyzePdf(
@@ -34,7 +36,9 @@ public class PdfAnalysisController {
             }
 
             String schema = pdfAnalysisService.analyzeWithAi(file, aiProvider);
-            return ResponseEntity.ok(schema);
+            // Parse to object so Spring/Jackson serializes valid JSON
+            Object schemaObj = objectMapper.readValue(schema, Object.class);
+            return ResponseEntity.ok(schemaObj);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
                     .body(new ErrorResponse("BAD_REQUEST", e.getMessage()));

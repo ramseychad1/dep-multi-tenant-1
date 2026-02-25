@@ -90,7 +90,7 @@ public class PdfAnalysisService {
 
         Map<String, Object> requestBody = Map.of(
                 "model", "claude-sonnet-4-20250514",
-                "max_tokens", 4096,
+                "max_tokens", 16384,
                 "messages", List.of(Map.of(
                         "role", "user",
                         "content", contentBlocks
@@ -122,7 +122,10 @@ public class PdfAnalysisService {
                 List<Map<String, Object>> content = (List<Map<String, Object>>) response.get("content");
                 for (Map<String, Object> block : content) {
                     if ("text".equals(block.get("type"))) {
-                        return extractJsonFromResponse((String) block.get("text"));
+                        String result = extractJsonFromResponse((String) block.get("text"));
+                        log.info("Returning schema to frontend, length: {} chars", result.length());
+                        log.debug("Schema preview: {}", result.substring(0, Math.min(200, result.length())));
+                        return result;
                     }
                 }
             }
