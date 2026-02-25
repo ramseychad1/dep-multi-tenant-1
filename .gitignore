@@ -16,7 +16,7 @@ frontend/.angular/
 .vscode/
 *.swp
 *.swo
-dep-multi-tenant-developer-package 2/
+#dep-multi-tenant-developer-package 2/
 
 # OS
 .DS_Store
